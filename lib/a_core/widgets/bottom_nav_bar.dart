@@ -16,7 +16,8 @@ class BottomNavBar extends StatelessWidget {
       color: AppColors.navyBlue,
       animate: false,
       backgroundColor: Colors.transparent,
-      letIndexChange: (index) => true,
+      // color: Colors.transparent,
+      letIndexChange: (index) => false,
       index: 2,
       items: [
         Column(
@@ -57,19 +58,7 @@ class BottomNavBar extends StatelessWidget {
             // semanticsLabel: 'Acme Logo',
           ),
         ),
-        NavigationDestination(
-          icon: SvgPicture.asset(
-            'assets/icons/products.svg',
-            // Add your products icon
-          ),
-          label: 'Products',
-        ),
       ],
-      onTap: (index) {
-        if (index == 2) {
-          Navigator.pushNamed(context, '/products');
-        }
-      },
     );
   }
 }

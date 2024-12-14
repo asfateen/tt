@@ -8,14 +8,27 @@ import 'package:batee5/a_core/widgets/batee5_search_bar.dart';
 import 'package:batee5/a_core/widgets/product_card/product_card.dart';
 import 'package:batee5/a_core/widgets/svg_button.dart';
 import 'package:flutter/material.dart';
-import 'package:batee5/1_features/products/data/models/product_model.dart';
+import 'package:provider/provider.dart';
+import '../../a_core/providers/product_provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
   double height = 0;
   double width = 0;
   String imageUrl = 'assets/images/fashion.jpg';
+
+  @override
+  void initState() {
+    super.initState();
+    // Load products when the screen initializes
+    Future.microtask(() =>
+        Provider.of<ProductProvider>(context, listen: false).loadProducts());
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -151,17 +164,16 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () {
                           debugPrint('product pressed');
                         },
-                        product: Product(
-                          id: 1,
-                          title: 'Kataketo',
-                          description: 'Best chocolate in egypt',
-                          price: 15,
-                          imageUrl: 'assets/images/kataketo.jpeg',
-                          location: '',
-                          dateListed: DateTime(2024, 11, 1),
-                          isFavorite: true,
-                          sellerId: 1,
-                        ),
+                        isFavorite: true,
+                        imageUrl: 'assets/images/kataketo.jpeg',
+                        title: 'Kataketo',
+                        description: 'Best chocolate in egypt',
+                        price: 15,
+                        location: '',
+                        dateListed: DateTime(2024, 11, 1),
+                        // area: 0,
+                        // numberOfBedrooms: 3,
+                        // numberOfBathrooms: 3,
                       ),
                     ],
                   ),
