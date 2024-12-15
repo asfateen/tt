@@ -21,31 +21,6 @@ class ApiService {
     throw Exception('Failed to load categories');
   }
 
-  Future<Map<String, Product>> getAllProducts() async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}');
-    final response = await _client.get(uri);
-    
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      Map<String, Product> products = {};
-      
-      data.forEach((categoryId, categoryProducts) {
-        if (categoryProducts is Map) {
-          (categoryProducts as Map<String, dynamic>).forEach((productId, productData) {
-            try {
-              products[productId] = Product.fromJson(productId, productData as Map<String, dynamic>);
-            } catch (e) {
-              debugPrint('Error parsing product $productId: $e');
-            }
-          });
-        }
-      });
-      
-      return products;
-    }
-    throw Exception('Failed to load products');
-  }
-
   Future<Map<String, Product>> getProductsByCategory(String category) async {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.productByCategory(category)}');
     final response = await _client.get(uri);
@@ -67,14 +42,7 @@ class ApiService {
     throw Exception('Failed to load products');
   }
 
-  Future<bool> toggleFavorite(String? category, String productId) async {
-    if (category == null) {
-      // If no category is selected, use the product's category
-      final product = (await getAllProducts())[productId];
-      if (product == null) throw Exception('Product not found');
-      category = product.category;
-    }
-    
+  Future<bool> toggleFavorite(String category, String productId) async {
     final response = await _client.post(
       Uri.parse('${ApiConstants.baseUrl}${ApiConstants.toggleFavorite(category, productId)}'),
     );

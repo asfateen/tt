@@ -31,19 +31,25 @@ class _HomeScreenState extends State<HomeScreen> {
   
   Future<void> _loadData() async {
     try {
-      // Always fetch categories
       final cats = await _apiService.getCategories();
-      
-      // Fetch products based on selection
-      final prods = selectedCategory == null 
-          ? await _apiService.getAllProducts()
-          : await _apiService.getProductsByCategory(selectedCategory!);
       
       if (mounted) {
         setState(() {
           categories = cats;
-          products = prods;
+          // If no category is selected, select the first one
+          if (selectedCategory == null && cats.isNotEmpty) {
+            selectedCategory = cats.keys.first;
+          }
         });
+      }
+
+      if (selectedCategory != null) {
+        final prods = await _apiService.getProductsByCategory(selectedCategory!);
+        if (mounted) {
+          setState(() {
+            products = prods;
+          });
+        }
       }
     } catch (e) {
       debugPrint('Error loading data: $e');
