@@ -8,13 +8,14 @@ on:
       - "**"
 
 jobs:
-  backend:
+  validate:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Backend Setup
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -35,18 +36,12 @@ jobs:
         run: |
           cd backend
           python run.py &
+          echo "Backend PID: $!" >> $GITHUB_ENV
         env:
           FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
           FIREBASE_CREDENTIALS_PATH: "firebase_credentials.json"
 
-  validate:
-    needs: backend
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      # Flutter Setup and Validation
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.12.0
         with:
@@ -62,3 +57,8 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+      # Cleanup
+      - name: Stop backend server
+        if: always()
+        run: kill ${{ env.Backend_PID }}
