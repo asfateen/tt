@@ -36,7 +36,7 @@ jobs:
         run: |
           cd backend
           python run.py &
-          echo "Backend PID: $!" >> $GITHUB_ENV
+          echo "BACKEND_PID=$!" >> $GITHUB_ENV
         env:
           FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
           FIREBASE_CREDENTIALS_PATH: "firebase_credentials.json"
@@ -61,4 +61,4 @@ jobs:
       # Cleanup
       - name: Stop backend server
         if: always()
-        run: kill ${{ env.Backend_PID }}
+        run: kill ${{ env.BACKEND_PID }}
