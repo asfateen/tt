@@ -3,32 +3,35 @@ class Product {
   final String title;
   final String description;
   final double price;
-  final String category;
   final String imageUrl;
+  final String category;
   final String location;
-  final DateTime dateListed;
+  final String dateListed;
+  final bool isFavorite;
 
   Product({
     required this.id,
     required this.title,
     required this.description,
     required this.price,
-    required this.category,
     required this.imageUrl,
+    required this.category,
     required this.location,
     required this.dateListed,
+    required this.isFavorite,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      price: json['price'].toDouble(),
-      category: json['category'],
-      imageUrl: json['imageUrl'],
-      location: json['location'],
-      dateListed: DateTime.parse(json['dateListed']),
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      price: (json['price'] ?? 0.0).toDouble(),
+      imageUrl: json['imageUrl'] ?? '',
+      category: json['category'] ?? '',
+      location: json['location'] ?? '',
+      dateListed: json['dateListed'] ?? '',
+      isFavorite: json['isFavorite'] ?? false,
     );
   }
 }

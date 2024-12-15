@@ -6,9 +6,29 @@ firebase_service = FirebaseService()
 
 @bp.route('/', methods=['GET'])
 def get_products():
-    category = request.args.get('category')
-    products = firebase_service.get_products(category)
-    return jsonify(products)
+    try:
+        category = request.args.get('category')
+        products = firebase_service.get_products(category)
+        
+        if not products:
+            return jsonify({
+                'status': 'success',
+                'message': 'No products found',
+                'data': []
+            }), 200
+            
+        return jsonify({
+            'status': 'success',
+            'data': products
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in get_products route: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Failed to fetch products',
+            'error': str(e)
+        }), 500
 
 @bp.route('/<category>/<product_id>', methods=['GET'])
 def get_product(category, product_id):

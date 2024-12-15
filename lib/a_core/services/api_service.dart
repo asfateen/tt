@@ -11,26 +11,35 @@ class ApiService {
         'Accept': 'application/json',
       };
 
-  Future<Map<String, dynamic>> getProducts({String? category}) async {
+  Future<List<Product>> getProducts({String? category}) async {
     try {
-      final uri = Uri.parse('$baseUrl/products')
+      final uri = Uri.parse('${ApiConfig.baseUrl}${ApiConfig.products}')
           .replace(queryParameters: category != null ? {'category': category} : null);
           
-      final response = await _client.get(
-        uri,
-        headers: _headers,
-      );
-      
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      final response = await _client.get(uri);
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final Map<String, dynamic> data = responseData['data'];
+        
+        List<Product> products = [];
+        
+        // Iterate through categories
+        data.forEach((category, categoryProducts) {
+          // Iterate through products in each category
+          (categoryProducts as Map<String, dynamic>).forEach((productId, productData) {
+            products.add(Product.fromJson({
+              'id': productId,
+              ...productData as Map<String, dynamic>
+            }));
+          });
+        });
+        
+        return products;
       } else {
-        throw Exception('Failed to load products: ${response.statusCode}');
+        throw Exception('Failed to load products');
       }
     } catch (e) {
-      print('Error in getProducts: $e');
       throw Exception('Error connecting to server: $e');
     }
   }

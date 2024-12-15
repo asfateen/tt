@@ -19,3 +19,7 @@ def test_connection():
             "backend_status": "error",
             "error_details": str(e)
         }), 500
+
+@bp.route('/health', methods=['GET'])
+def health_check():
+    return {'status': 'success', 'message': 'Server is running'}, 200
