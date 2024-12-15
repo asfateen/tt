@@ -20,19 +20,32 @@ class _ConnectionTestWidgetState extends State<ConnectionTestWidget> {
     });
 
     try {
+      // First try the health check
+      final healthResponse = await http.get(
+        Uri.parse('http://localhost:5000/api/health'),
+      );
+      
+      if (healthResponse.statusCode != 200) {
+        throw Exception('Health check failed: ${healthResponse.statusCode}');
+      }
+
+      // Then try the test connection
       final response = await http.get(
         Uri.parse('http://localhost:5000/api/test/connection'),
       );
 
+      if (response.statusCode != 200) {
+        throw Exception('Test failed: ${response.statusCode}\n${response.body}');
+      }
+
       final data = json.decode(response.body);
       setState(() {
         _status = 'Backend: ${data['backend_status']}\n'
-            'Firebase: ${data['status']}\n'
             'Message: ${data['message']}';
       });
     } catch (e) {
       setState(() {
-        _status = 'Error: $e';
+        _status = 'Error Details:\n$e';
       });
     } finally {
       setState(() {

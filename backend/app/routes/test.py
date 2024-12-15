@@ -7,16 +7,15 @@ firebase_service = FirebaseService()
 @bp.route('/connection', methods=['GET'])
 def test_connection():
     try:
-        # Try to access Firebase
-        firebase_service.db.get()
         return jsonify({
             "status": "success",
-            "message": "Successfully connected to Firebase",
+            "message": "Backend connection successful",
             "backend_status": "running"
         })
     except Exception as e:
         return jsonify({
             "status": "error",
             "message": str(e),
-            "backend_status": "running"
+            "backend_status": "error",
+            "error_details": str(e)
         }), 500

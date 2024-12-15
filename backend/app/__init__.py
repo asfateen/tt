@@ -1,16 +1,20 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from app.routes import categories, products, test
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": ["*"],  # In production, replace with your Flutter app's domain
-            "methods": ["GET", "POST", "PUT", "DELETE"],
-            "allow_headers": ["Content-Type"]
-        }
-    })
+    
+    # Development CORS setup - DO NOT USE IN PRODUCTION!
+    CORS(app, 
+         resources={r"/*": {"origins": "*"}},
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
+    @app.route('/api/health', methods=['GET'])
+    def health_check():
+        return jsonify({"status": "healthy"})
 
     # Register blueprints
     app.register_blueprint(categories.bp)
