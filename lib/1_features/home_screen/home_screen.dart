@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   Map<String, models.Category> categories = {};
   Map<String, Product> products = {};
-  String? selectedCategory; // null means show all products
+  String selectedCategory = 'electronics'; // Default category
   
   @override
   void initState() {
@@ -32,24 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadData() async {
     try {
       final cats = await _apiService.getCategories();
+      final prods = await _apiService.getProductsByCategory(selectedCategory);
       
       if (mounted) {
         setState(() {
           categories = cats;
-          // If no category is selected, select the first one
-          if (selectedCategory == null && cats.isNotEmpty) {
-            selectedCategory = cats.keys.first;
-          }
+          products = prods;
         });
-      }
-
-      if (selectedCategory != null) {
-        final prods = await _apiService.getProductsByCategory(selectedCategory!);
-        if (mounted) {
-          setState(() {
-            products = prods;
-          });
-        }
       }
     } catch (e) {
       debugPrint('Error loading data: $e');
@@ -273,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void onCategorySelected(String? categoryId) {
+  void onCategorySelected(String categoryId) {
     setState(() {
       selectedCategory = categoryId;
     });
