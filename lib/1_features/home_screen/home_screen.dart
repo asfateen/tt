@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   Map<String, Category> categories = {};
   Map<String, Product> products = {};
-  String selectedCategory = 'all'; // Default to show all products
+  String? selectedCategory; // null means show all products
   
   @override
   void initState() {
@@ -31,8 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
   
   Future<void> _loadData() async {
     try {
+      // Always fetch categories
       final cats = await _apiService.getCategories();
-      final prods = await _apiService.getProductsByCategory(selectedCategory == 'all' ? null : selectedCategory);
+      
+      // Fetch products based on selection
+      final prods = selectedCategory == null 
+          ? await _apiService.getAllProducts()
+          : await _apiService.getProductsByCategory(selectedCategory!);
       
       if (mounted) {
         setState(() {
@@ -158,23 +163,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: categories.values.map((category) => 
+                      children: [
+                        // "All" option
                         GestureDetector(
-                          onTap: () => onCategorySelected(category.id),
+                          onTap: () => onCategorySelected(null),
                           child: Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Column(
                               children: [
                                 CircleAvatar(
                                   radius: width * 0.025 > 40 ? 40 : width * 0.025,
-                                  foregroundImage: category.icon.startsWith('http')
-                                      ? NetworkImage(category.icon) as ImageProvider
-                                      : AssetImage(category.icon) as ImageProvider,
+                                  backgroundColor: AppColors.lightGrey,
+                                  child: Icon(Icons.grid_view_rounded, 
+                                    color: selectedCategory == null ? AppColors.blue : Colors.black,
+                                  ),
                                 ),
                                 Text(
-                                  category.name,
+                                  'All',
                                   style: TextStyle(
-                                    color: selectedCategory == category.id 
+                                    color: selectedCategory == null 
                                         ? AppColors.blue 
                                         : Colors.black,
                                     fontSize: width * 0.04 > 20 ? 20 : width * 0.04,
@@ -185,7 +192,36 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                      ).toList(),
+                        // Regular categories
+                        ...categories.values.map((category) => 
+                          GestureDetector(
+                            onTap: () => onCategorySelected(category.id),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: width * 0.025 > 40 ? 40 : width * 0.025,
+                                    foregroundImage: category.icon.startsWith('http')
+                                        ? NetworkImage(category.icon)
+                                        : AssetImage(category.icon) as ImageProvider,
+                                  ),
+                                  Text(
+                                    category.name,
+                                    style: TextStyle(
+                                      color: selectedCategory == category.id 
+                                          ? AppColors.blue 
+                                          : Colors.black,
+                                      fontSize: width * 0.04 > 20 ? 20 : width * 0.04,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ).toList(),
+                      ],
                     ),
                   ),
                 ],
@@ -230,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void onCategorySelected(String categoryId) {
+  void onCategorySelected(String? categoryId) {
     setState(() {
       selectedCategory = categoryId;
     });
