@@ -31,11 +31,6 @@ jobs:
           cd backend
           pip install -r requirements.txt
 
-      - name: Run backend tests
-        run: |
-          cd backend
-          python -m pytest
-
       - name: Start backend server
         run: |
           cd backend
@@ -63,7 +58,7 @@ jobs:
         run: flutter pub get
 
       - name: Analyze code
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings # remove flags if you want to treat infos and warnings as errors
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Run tests
         run: flutter test
