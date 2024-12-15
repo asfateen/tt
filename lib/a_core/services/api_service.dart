@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
+import '../models/product.dart';
 
 class ApiService {
   final http.Client _client = http.Client();
-  static const String baseUrl = 'http://localhost:8000/api';
+  static const String baseUrl = 'http://localhost:5000/api';
 
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -13,7 +14,7 @@ class ApiService {
 
   Future<List<Product>> getProducts({String? category}) async {
     try {
-      final uri = Uri.parse('${ApiConfig.baseUrl}${ApiConfig.products}')
+      final uri = Uri.parse('http://localhost:5000/api/products')
           .replace(queryParameters: category != null ? {'category': category} : null);
           
       final response = await _client.get(uri);
@@ -24,9 +25,7 @@ class ApiService {
         
         List<Product> products = [];
         
-        // Iterate through categories
         data.forEach((category, categoryProducts) {
-          // Iterate through products in each category
           (categoryProducts as Map<String, dynamic>).forEach((productId, productData) {
             products.add(Product.fromJson({
               'id': productId,

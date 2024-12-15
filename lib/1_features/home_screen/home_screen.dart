@@ -33,11 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadProducts() async {
     try {
-      final response = await _apiService.getProducts();
+      final products = await _apiService.getProducts();
       setState(() {
-        products = (response['data'] as List)
-            .map((item) => Product.fromJson(item))
-            .toList();
+        this.products = products;
         isLoading = false;
       });
     } catch (e) {
