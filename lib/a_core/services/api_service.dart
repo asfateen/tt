@@ -29,11 +29,15 @@ class ApiService {
       final Map<String, dynamic> data = json.decode(response.body);
       Map<String, Product> products = {};
       
-      data.forEach((key, value) {
-        try {
-          products[key] = Product.fromJson(key, value as Map<String, dynamic>);
-        } catch (e) {
-          debugPrint('Error parsing product $key: $e');
+      data.forEach((categoryId, categoryProducts) {
+        if (categoryProducts is Map) {
+          (categoryProducts as Map<String, dynamic>).forEach((productId, productData) {
+            try {
+              products[productId] = Product.fromJson(productId, productData as Map<String, dynamic>);
+            } catch (e) {
+              debugPrint('Error parsing product $productId: $e');
+            }
+          });
         }
       });
       
@@ -43,18 +47,18 @@ class ApiService {
   }
 
   Future<Map<String, Product>> getProductsByCategory(String category) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}?category=$category');
+    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.productByCategory(category)}');
     final response = await _client.get(uri);
     
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       Map<String, Product> products = {};
       
-      data.forEach((key, value) {
+      data.forEach((productId, productData) {
         try {
-          products[key] = Product.fromJson(key, value as Map<String, dynamic>);
+          products[productId] = Product.fromJson(productId, productData as Map<String, dynamic>);
         } catch (e) {
-          debugPrint('Error parsing product $key: $e');
+          debugPrint('Error parsing product $productId: $e');
         }
       });
       
