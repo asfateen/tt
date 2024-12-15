@@ -17,7 +17,10 @@ class ApiService {
       final uri = Uri.parse('http://localhost:5000/api/products')
           .replace(queryParameters: category != null ? {'category': category} : null);
           
-      final response = await _client.get(uri);
+      final response = await _client.get(
+        uri,
+        headers: _headers,
+      );
       
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -35,8 +38,10 @@ class ApiService {
         });
         
         return products;
+      } else if (response.statusCode == 403) {
+        throw Exception('Access denied. Please check your authentication.');
       } else {
-        throw Exception('Failed to load products');
+        throw Exception('Failed to load products (Status: ${response.statusCode})');
       }
     } catch (e) {
       throw Exception('Error connecting to server: $e');

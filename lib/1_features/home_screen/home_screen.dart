@@ -33,17 +33,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadProducts() async {
     try {
-      print('Loading products...');
+      setState(() {
+        isLoading = true;
+        error = null;
+      });
+      
       final products = await _apiService.getProducts();
-      print('Products loaded: ${products.length}');
+      
       setState(() {
         this.products = products;
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading products: $e');
       setState(() {
-        error = e.toString();
+        error = 'Unable to load products. Please try again later.';
         isLoading = false;
       });
     }
