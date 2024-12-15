@@ -63,13 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _toggleFavorite(String productId) async {
+    if (selectedCategory == null) return;
+    
     try {
       final newStatus = await _apiService.toggleFavorite(selectedCategory, productId);
       setState(() {
         products[productId]?.isFavorite = newStatus;
       });
     } catch (e) {
-      // Handle error
       debugPrint(e.toString());
     }
   }

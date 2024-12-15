@@ -42,7 +42,11 @@ class ApiService {
     throw Exception('Failed to load products');
   }
 
-  Future<bool> toggleFavorite(String category, String productId) async {
+  Future<bool> toggleFavorite(String? category, String productId) async {
+    if (category == null) {
+      throw Exception('Category is required to toggle favorite');
+    }
+    
     final response = await _client.post(
       Uri.parse('${ApiConstants.baseUrl}${ApiConstants.toggleFavorite(category, productId)}'),
     );
