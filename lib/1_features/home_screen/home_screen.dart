@@ -33,12 +33,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadProducts() async {
     try {
+      print('Loading products...');
       final products = await _apiService.getProducts();
+      print('Products loaded: ${products.length}');
       setState(() {
         this.products = products;
         isLoading = false;
       });
     } catch (e) {
+      print('Error loading products: $e');
       setState(() {
         error = e.toString();
         isLoading = false;
@@ -175,21 +178,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisCount: 3,
                 title: 'Special Items',
                 fullItemCount: products.length,
-                items: products.map((product) => 
-                  ProductCard(
-                    size: width * .35,
-                    onPressed: () {
-                      debugPrint('product pressed');
-                    },
-                    isFavorite: product.isFavorite,
-                    imageUrl: product.imageUrl,
-                    title: product.title,
-                    description: product.description,
-                    price: product.price,
-                    location: product.location,
-                    dateListed: DateTime.parse(product.dateListed),
-                  ),
-                ).toList(),
+                items: isLoading 
+                  ? [CircularProgressIndicator()]
+                  : products.map((product) => Column(
+                      children: [
+                        ProductCard(
+                          size: width * .35,
+                          onPressed: () {
+                            debugPrint('product pressed');
+                          },
+                          isFavorite: product.isFavorite,
+                          imageUrl: product.imageUrl,
+                          title: product.title,
+                          description: product.description,
+                          price: product.price,
+                          location: product.location,
+                          dateListed: DateTime.parse(product.dateListed),
+                        ),
+                      ],
+                    )).toList(),
                 mainAxisExtent: width * .47,
               ),
               SizedBox(height: height * .145),
