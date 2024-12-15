@@ -20,10 +20,12 @@ class ApiService {
     throw Exception('Failed to load categories');
   }
 
-  Future<Map<String, Product>> getProductsByCategory(String category) async {
-    final response = await _client.get(
-      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}?category=$category'),
-    );
+  Future<Map<String, Product>> getProductsByCategory(String? category) async {
+    final uri = category == null 
+        ? Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}')
+        : Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}?category=$category');
+        
+    final response = await _client.get(uri);
     
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
