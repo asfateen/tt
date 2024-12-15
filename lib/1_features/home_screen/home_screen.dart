@@ -184,35 +184,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing: 35,
                 crossAxisCount: 3,
                 title: 'Special Items',
-                fullItemCount: 22,
-                items: List.filled(
-                  60,
-                  Column(
-                    children: [
-                      ProductCard(
-                        id: product.id,
-                        category: product.category,
-                        size: width * .35,
-                        onPressed: () {
-                          debugPrint('product pressed');
-                        },
-                        onFavoriteToggled: (bool newStatus) {
-                          _toggleFavorite(product.id);
-                        },
-                        isFavorite: product.isFavorite,
-                        imageUrl: product.imageUrl,
-                        title: product.title,
-                        description: product.description,
-                        price: product.price,
-                        location: product.location,
-                        dateListed: product.dateListed,
-                        area: product.area,
-                        numberOfBedrooms: product.numberOfBedrooms,
-                        numberOfBathrooms: product.numberOfBathrooms,
-                      ),
-                    ],
-                  ),
-                ),
+                fullItemCount: products.length,
+                items: products.values.map((product) => Column(
+                  children: [
+                    ProductCard(
+                      id: product.id,
+                      category: product.category,
+                      size: width * .35,
+                      onPressed: () {
+                        debugPrint('product pressed');
+                      },
+                      onFavoriteToggled: (bool newStatus) {
+                        _toggleFavorite(product.id);
+                      },
+                      isFavorite: product.isFavorite,
+                      imageUrl: product.imageUrl,
+                      title: product.title,
+                      description: product.description,
+                      price: product.price,
+                      location: product.location,
+                      dateListed: product.dateListed,
+                      area: product.area,
+                      numberOfBedrooms: product.numberOfBedrooms,
+                      numberOfBathrooms: product.numberOfBathrooms,
+                    ),
+                  ],
+                )).toList(),
                 mainAxisExtent: width * .47,
               ),
               SizedBox(height: height * .145),
