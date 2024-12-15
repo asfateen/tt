@@ -174,30 +174,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing: 35,
                 crossAxisCount: 3,
                 title: 'Special Items',
-                fullItemCount: 22,
-                items: List.filled(
-                  60,
-                  Column(
-                    children: [
-                      ProductCard(
-                        size: width * .35,
-                        onPressed: () {
-                          debugPrint('product pressed');
-                        },
-                        isFavorite: true,
-                        imageUrl: 'assets/images/kataketo.jpeg',
-                        title: 'Kataketo',
-                        description: 'Best chocolate in egypt',
-                        price: 15,
-                        location: '',
-                        dateListed: DateTime(2024, 11, 1),
-                        // area: 0,
-                        // numberOfBedrooms: 3,
-                        // numberOfBathrooms: 3,
-                      ),
-                    ],
+                fullItemCount: products.length,
+                items: products.map((product) => 
+                  ProductCard(
+                    size: width * .35,
+                    onPressed: () {
+                      debugPrint('product pressed');
+                    },
+                    isFavorite: product.isFavorite,
+                    imageUrl: product.imageUrl,
+                    title: product.title,
+                    description: product.description,
+                    price: product.price,
+                    location: product.location,
+                    dateListed: DateTime.parse(product.dateListed),
                   ),
-                ),
+                ).toList(),
                 mainAxisExtent: width * .47,
               ),
               SizedBox(height: height * .145),

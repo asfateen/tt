@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify
+from flask_cors import CORS
 from app.services.firebase_service import FirebaseService
 
 bp = Blueprint('test', __name__, url_prefix='/api/test')
+CORS(bp)
 firebase_service = FirebaseService()
 
 @bp.route('/connection', methods=['GET'])

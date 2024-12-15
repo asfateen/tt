@@ -4,6 +4,7 @@ from app.routes import categories, products, test
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)  # Enable CORS for the entire app
     
     # Development CORS setup - DO NOT USE IN PRODUCTION!
     CORS(app, 
