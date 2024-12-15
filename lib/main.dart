@@ -4,18 +4,9 @@ import 'package:batee5/a_core/config/apptheme.dart';
 import 'package:batee5/a_core/widgets/bottom_nav_bar.dart';
 import 'package:batee5/a_core/widgets/batee5_app_bar/batee5_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'a_core/providers/product_provider.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

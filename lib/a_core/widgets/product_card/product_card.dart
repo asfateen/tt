@@ -3,10 +3,8 @@ import 'package:batee5/a_core/utils/datetime_utils.dart';
 import 'package:batee5/a_core/widgets/batee5_app_bar/components/multi_color_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
-import '../providers/product_provider.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final String imageUrl;
   final double size;
   final String title;
@@ -17,9 +15,8 @@ class ProductCard extends StatelessWidget {
   final int? numberOfBedrooms;
   final int? numberOfBathrooms;
   final int? area;
-  final int productId;
+  bool isFavorite;
   final VoidCallback? onPressed;
-
   ProductCard({
     super.key,
     required this.imageUrl,
@@ -31,82 +28,103 @@ class ProductCard extends StatelessWidget {
     this.numberOfBedrooms,
     this.numberOfBathrooms,
     this.area,
-    required this.productId,
+    required this.isFavorite,
     required this.onPressed,
     required this.size,
   });
 
   @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  double width = 0;
+  double height = 0;
+  @override
   Widget build(BuildContext context) {
+    width = widget.size;
     return GestureDetector(
-      onTap: onPressed,
-      child: Card(
+      onTap: () {
+        if (widget.onPressed != null) {
+          widget.onPressed!();
+        }
+      },
+      child: Container(
+        width: width * .3,
+        height: width * .47,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(2),
+          border: Border.all(
+            width: width * .00266,
+            color: AppColors.borderGrey,
+          ),
+        ),
         child: Stack(
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: size * .19,
+                  height: width * .19,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: imageUrl.startsWith("http")
-                          ? NetworkImage(imageUrl) as ImageProvider
-                          : AssetImage(imageUrl) as ImageProvider,
+                      image: widget.imageUrl.startsWith("http")
+                          ? NetworkImage(widget.imageUrl) as ImageProvider
+                          : AssetImage(widget.imageUrl) as ImageProvider,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 Text(
-                  "EGP ${price}",
+                  "EGP ${widget.price}",
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: size * .04,
+                    fontSize: width * .04,
                     color: AppColors.darkBlue,
                   ),
                 ),
                 Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: size * .037,
+                    fontSize: width * .037,
                     color: Colors.black,
                   ),
                 ),
                 SizedBox(
-                  height: size * .05,
+                  height: width * .05,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      SizedBox(width: size * .005),
-                      numberOfBedrooms != null
+                      SizedBox(width: width * .005),
+                      widget.numberOfBedrooms != null
                           ? SvgPicture.asset(
-                            width: size * .05,
+                            width: width * .05,
                             'assets/icons/bedroom.svg',
                           )
                           : const SizedBox(),
-                      SizedBox(width: size * .015),
-                      numberOfBathrooms != null
+                      SizedBox(width: width * .015),
+                      widget.numberOfBathrooms != null
                           ? SvgPicture.asset(
-                            width: size * .05,
+                            width: width * .05,
                             'assets/icons/bathroom.svg',
                           )
                           : const SizedBox(),
-                      SizedBox(width: size * .015),
-                      numberOfBedrooms != null
+                      SizedBox(width: width * .015),
+                      widget.numberOfBedrooms != null
                           ? Row(
                             children: [
                               SvgPicture.asset(
-                                width: size * .05,
+                                width: width * .05,
                                 'assets/icons/area.svg',
                               ),
-                              SizedBox(width: size * .01),
+                              SizedBox(width: width * .01),
                               Text(
-                                "${area} m²",
+                                "${widget.area} m²",
                                 style: TextStyle(
                                   color: AppColors.darkGrey2,
-                                  fontSize: size * .032,
+                                  fontSize: width * .032,
                                 ),
                               ),
                             ],
@@ -116,20 +134,20 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  location,
+                  widget.location,
                   style: TextStyle(
-                    fontSize: size * .037,
+                    fontSize: width * .037,
                     fontWeight: FontWeight.w400,
                     color: AppColors.darkGrey,
                   ),
                 ),
                 Text(
                   DateTimeUtils.getFormattedDuration(
-                    DateTime.now().difference(dateListed),
+                    DateTime.now().difference(widget.dateListed),
                   ),
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: size * .037,
+                    fontSize: width * .037,
                     color: AppColors.darkGrey,
                   ),
                 ),
@@ -138,23 +156,27 @@ class ProductCard extends StatelessWidget {
             Align(
               alignment: Alignment(.9, -1.08),
               child: SizedBox(
-                width: size * .04,
+                width: width * .04,
                 child: OutlinedMultiColorButton(
                   fillColor: Colors.white,
                   filledIcon:
-                      Icon(
-                        size: size * .022,
-                        Icons.favorite_rounded,
-                        color: Colors.red,
-                      ),
+                      widget.isFavorite
+                          ? const SizedBox()
+                          : Icon(
+                            size: width * .022,
+                            Icons.favorite_rounded,
+                            color: Colors.red,
+                          ),
                   borderIcon: Icon(
-                    size: size * .022,
+                    size: width * .022,
                     Icons.favorite_outline_rounded,
                     color: Colors.red,
                   ),
                   onPressed: () {
-                    Provider.of<ProductProvider>(context, listen: false)
-                        .toggleFavorite(productId);
+                    setState(() {
+                      widget.isFavorite = !widget.isFavorite;
+                    });
+                    debugPrint("Favorite");
                   },
                 ),
               ),

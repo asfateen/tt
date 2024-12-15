@@ -8,27 +8,49 @@ import 'package:batee5/a_core/widgets/batee5_search_bar.dart';
 import 'package:batee5/a_core/widgets/product_card/product_card.dart';
 import 'package:batee5/a_core/widgets/svg_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../a_core/providers/product_provider.dart';
+import 'package:batee5/a_core/services/api_service.dart';
+import 'package:batee5/a_core/models/product.dart';
+import 'package:batee5/a_core/widgets/connection_test_widget.dart';
 
 class HomeScreen extends StatefulWidget {
+  HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double height = 0;
-  double width = 0;
-  String imageUrl = 'assets/images/fashion.jpg';
+  final ApiService _apiService = ApiService();
+  List<Product> products = [];
+  bool isLoading = true;
+  String? error;
 
   @override
   void initState() {
     super.initState();
-    // Load products when the screen initializes
-    Future.microtask(() =>
-        Provider.of<ProductProvider>(context, listen: false).loadProducts());
+    _loadProducts();
   }
 
+  Future<void> _loadProducts() async {
+    try {
+      final response = await _apiService.getProducts();
+      setState(() {
+        products = (response['data'] as List)
+            .map((item) => Product.fromJson(item))
+            .toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
+    }
+  }
+
+  double height = 0;
+  double width = 0;
+  String imageUrl = 'assets/images/fashion.jpg';
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -181,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisExtent: width * .47,
               ),
               SizedBox(height: height * .145),
+              const ConnectionTestWidget(),
             ],
           ),
         ),
