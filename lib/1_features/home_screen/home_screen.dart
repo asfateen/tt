@@ -9,46 +9,50 @@ import 'package:batee5/a_core/widgets/product_card/product_card.dart';
 import 'package:batee5/a_core/widgets/svg_button.dart';
 import 'package:flutter/material.dart';
 import 'package:batee5/a_core/services/api_service.dart';
+import 'package:batee5/a_core/models/category.dart';
 import 'package:batee5/a_core/models/product.dart';
-import 'package:batee5/a_core/widgets/connection_test_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
-  List<Product> products = [];
-  bool isLoading = true;
-  String? error;
-
+  Map<String, Category> categories = {};
+  Map<String, Product> products = {};
+  String selectedCategory = 'electronics'; // Default category
+  
   @override
   void initState() {
     super.initState();
-    _loadProducts();
+    _loadData();
   }
-
-  Future<void> _loadProducts() async {
+  
+  Future<void> _loadData() async {
     try {
-      setState(() {
-        isLoading = true;
-        error = null;
-      });
-      
-      final products = await _apiService.getProducts();
+      final cats = await _apiService.getCategories();
+      final prods = await _apiService.getProductsByCategory(selectedCategory);
       
       setState(() {
-        this.products = products;
-        isLoading = false;
+        categories = cats;
+        products = prods;
       });
     } catch (e) {
+      // Handle error
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> _toggleFavorite(String productId) async {
+    try {
+      final newStatus = await _apiService.toggleFavorite(selectedCategory, productId);
       setState(() {
-        error = 'Unable to load products. Please try again later.';
-        isLoading = false;
+        products[productId]?.isFavorite = newStatus;
       });
+    } catch (e) {
+      // Handle error
+      debugPrint(e.toString());
     }
   }
 
@@ -180,30 +184,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing: 35,
                 crossAxisCount: 3,
                 title: 'Special Items',
-                fullItemCount: products.length,
-                items: isLoading 
-                  ? [CircularProgressIndicator()]
-                  : products.map((product) => Column(
-                      children: [
-                        ProductCard(
-                          size: width * .35,
-                          onPressed: () {
-                            debugPrint('product pressed');
-                          },
-                          isFavorite: product.isFavorite,
-                          imageUrl: product.imageUrl,
-                          title: product.title,
-                          description: product.description,
-                          price: product.price,
-                          location: product.location,
-                          dateListed: DateTime.parse(product.dateListed),
-                        ),
-                      ],
-                    )).toList(),
+                fullItemCount: 22,
+                items: List.filled(
+                  60,
+                  Column(
+                    children: [
+                      ProductCard(
+                        id: product.id,
+                        category: product.category,
+                        size: width * .35,
+                        onPressed: () {
+                          debugPrint('product pressed');
+                        },
+                        onFavoriteToggled: (bool newStatus) {
+                          _toggleFavorite(product.id);
+                        },
+                        isFavorite: product.isFavorite,
+                        imageUrl: product.imageUrl,
+                        title: product.title,
+                        description: product.description,
+                        price: product.price,
+                        location: product.location,
+                        dateListed: product.dateListed,
+                        area: product.area,
+                        numberOfBedrooms: product.numberOfBedrooms,
+                        numberOfBathrooms: product.numberOfBathrooms,
+                      ),
+                    ],
+                  ),
+                ),
                 mainAxisExtent: width * .47,
               ),
               SizedBox(height: height * .145),
-              const ConnectionTestWidget(),
             ],
           ),
         ),

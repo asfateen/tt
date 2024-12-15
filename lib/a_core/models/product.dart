@@ -1,37 +1,46 @@
 class Product {
   final String id;
-  final String title;
-  final String description;
-  final double price;
-  final String imageUrl;
   final String category;
+  final DateTime dateListed;
+  final String description;
+  final String imageUrl;
+  bool isFavorite;
   final String location;
-  final String dateListed;
-  final bool isFavorite;
+  final double price;
+  final String title;
+  final int? area;
+  final int? numberOfBathrooms;
+  final int? numberOfBedrooms;
 
   Product({
     required this.id,
-    required this.title,
-    required this.description,
-    required this.price,
-    required this.imageUrl,
     required this.category,
-    required this.location,
     required this.dateListed,
+    required this.description,
+    required this.imageUrl,
     required this.isFavorite,
+    required this.location,
+    required this.price,
+    required this.title,
+    this.area,
+    this.numberOfBathrooms,
+    this.numberOfBedrooms,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
+  factory Product.fromJson(String id, Map<String, dynamic> json) {
     return Product(
-      id: json['id'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      price: (json['price'] ?? 0.0).toDouble(),
-      imageUrl: json['imageUrl'] ?? '',
-      category: json['category'] ?? '',
-      location: json['location'] ?? '',
-      dateListed: json['dateListed'] ?? '',
-      isFavorite: json['isFavorite'] ?? false,
+      id: id,
+      category: json['category'] as String,
+      dateListed: DateTime.parse(json['dateListed'] as String),
+      description: json['description'] as String,
+      imageUrl: json['imageUrl'] as String,
+      isFavorite: json['isFavorite'] as bool,
+      location: json['location'] as String,
+      price: (json['price'] as num).toDouble(),
+      title: json['title'] as String,
+      area: json['area'] as int?,
+      numberOfBathrooms: json['numberOfBathrooms'] as int?,
+      numberOfBedrooms: json['numberOfBedrooms'] as int?,
     );
   }
 }
