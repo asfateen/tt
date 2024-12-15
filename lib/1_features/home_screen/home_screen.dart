@@ -9,7 +9,7 @@ import 'package:batee5/a_core/widgets/product_card/product_card.dart';
 import 'package:batee5/a_core/widgets/svg_button.dart';
 import 'package:flutter/material.dart';
 import 'package:batee5/a_core/services/api_service.dart';
-import 'package:batee5/a_core/models/category.dart';
+import 'package:batee5/a_core/models/category.dart' as models;
 import 'package:batee5/a_core/models/product.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
-  Map<String, Category> categories = {};
+  Map<String, models.Category> categories = {};
   Map<String, Product> products = {};
   String? selectedCategory; // null means show all products
   

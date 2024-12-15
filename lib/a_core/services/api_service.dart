@@ -8,6 +8,19 @@ import 'package:batee5/a_core/models/product.dart';
 class ApiService {
   final http.Client _client = http.Client();
 
+  Future<Map<String, models.Category>> getCategories() async {
+    final response = await _client.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.categories}'));
+    
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data.map((key, value) => MapEntry(
+        key,
+        models.Category.fromJson(value as Map<String, dynamic>),
+      ));
+    }
+    throw Exception('Failed to load categories');
+  }
+
   Future<Map<String, Product>> getAllProducts() async {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}');
     final response = await _client.get(uri);
@@ -50,7 +63,14 @@ class ApiService {
     throw Exception('Failed to load products');
   }
 
-  Future<bool> toggleFavorite(String category, String productId) async {
+  Future<bool> toggleFavorite(String? category, String productId) async {
+    if (category == null) {
+      // If no category is selected, use the product's category
+      final product = (await getAllProducts())[productId];
+      if (product == null) throw Exception('Product not found');
+      category = product.category;
+    }
+    
     final response = await _client.post(
       Uri.parse('${ApiConstants.baseUrl}${ApiConstants.toggleFavorite(category, productId)}'),
     );
