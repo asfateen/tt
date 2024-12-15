@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadData() async {
     try {
       final cats = await _apiService.getCategories();
-      final prods = await _apiService.getProductsByCategory(selectedCategory);
+      final prods = await _apiService.getProductsByCategory(null);
       
       setState(() {
         categories = cats;
@@ -152,25 +152,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: categories.values.map((category) => 
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: width * 0.025 > 40 ? 40 : width * 0.025,
-                                foregroundImage: category.icon.startsWith('http')
-                                    ? NetworkImage(category.icon) as ImageProvider
-                                    : AssetImage(category.icon) as ImageProvider,
-                              ),
-                              Text(
-                                category.name,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: width * 0.04 > 20 ? 20 : width * 0.04,
-                                  fontWeight: FontWeight.w500,
+                        GestureDetector(
+                          onTap: () => onCategorySelected(category.id),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: width * 0.025 > 40 ? 40 : width * 0.025,
+                                  foregroundImage: category.icon.startsWith('http')
+                                      ? NetworkImage(category.icon) as ImageProvider
+                                      : AssetImage(category.icon) as ImageProvider,
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  category.name,
+                                  style: TextStyle(
+                                    color: selectedCategory == category.id 
+                                        ? AppColors.blue 
+                                        : Colors.black,
+                                    fontSize: width * 0.04 > 20 ? 20 : width * 0.04,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ).toList(),
