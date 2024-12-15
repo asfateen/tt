@@ -52,8 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _toggleFavorite(String productId) async {
-    if (selectedCategory == null) return;
-    
     try {
       final newStatus = await _apiService.toggleFavorite(selectedCategory, productId);
       setState(() {
@@ -160,34 +158,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        // "All" option
-                        GestureDetector(
-                          onTap: () => onCategorySelected(null),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: width * 0.025 > 40 ? 40 : width * 0.025,
-                                  backgroundColor: AppColors.lightGrey,
-                                  child: Icon(Icons.grid_view_rounded, 
-                                    color: selectedCategory == null ? AppColors.blue : Colors.black,
-                                  ),
-                                ),
-                                Text(
-                                  'All',
-                                  style: TextStyle(
-                                    color: selectedCategory == null 
-                                        ? AppColors.blue 
-                                        : Colors.black,
-                                    fontSize: width * 0.04 > 20 ? 20 : width * 0.04,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                         // Regular categories
                         ...categories.values.map((category) => 
                           GestureDetector(
