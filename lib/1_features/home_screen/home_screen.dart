@@ -34,13 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
       final cats = await _apiService.getCategories();
       final prods = await _apiService.getProductsByCategory(selectedCategory == 'all' ? null : selectedCategory);
       
-      setState(() {
-        categories = cats;
-        products = prods;
-      });
+      if (mounted) {
+        setState(() {
+          categories = cats;
+          products = prods;
+        });
+      }
     } catch (e) {
-      // Handle error
-      debugPrint(e.toString());
+      debugPrint('Error loading data: $e');
+      if (mounted) {
+        setState(() {
+          categories = {};
+          products = {};
+        });
+      }
     }
   }
 

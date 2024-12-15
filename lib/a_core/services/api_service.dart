@@ -29,10 +29,17 @@ class ApiService {
     
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      return data.map((key, value) => MapEntry(
-        key,
-        Product.fromJson(key, value as Map<String, dynamic>),
-      ));
+      Map<String, Product> products = {};
+      
+      data.forEach((key, value) {
+        try {
+          products[key] = Product.fromJson(key, value as Map<String, dynamic>);
+        } catch (e) {
+          debugPrint('Error parsing product $key: $e');
+        }
+      });
+      
+      return products;
     }
     throw Exception('Failed to load products');
   }
