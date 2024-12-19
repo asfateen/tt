@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:batee5/a_core/constants/api_constants.dart';
 import 'package:batee5/a_core/models/category.dart';
 import 'package:batee5/a_core/models/product.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class ApiService {
   final http.Client _client = http.Client();
@@ -31,7 +31,7 @@ class ApiService {
         final Map<String, dynamic> data = json.decode(response.body);
         
         // Debug print to see the response
-        debugPrint('API Response: $data');
+        foundation.debugPrint('API Response: $data');
         
         final products = <String, Product>{};
         
@@ -39,7 +39,7 @@ class ApiService {
           try {
             products[key] = Product.fromJson(key, value as Map<String, dynamic>);
           } catch (e) {
-            debugPrint('Error parsing product $key: $e');
+            foundation.debugPrint('Error parsing product $key: $e');
           }
         });
         
@@ -47,7 +47,7 @@ class ApiService {
       }
       throw Exception('Failed to load products: ${response.statusCode}');
     } catch (e) {
-      debugPrint('Error in getProductsByCategory: $e');
+      foundation.debugPrint('Error in getProductsByCategory: $e');
       return {};
     }
   }
