@@ -9,16 +9,25 @@ class ApiService {
   final http.Client _client = http.Client();
 
   Future<Map<String, Category>> getCategories() async {
-    final response = await _client.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.categories}'));
-    
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return data.map((key, value) => MapEntry(
-        key,
-        Category.fromJson(value as Map<String, dynamic>),
-      ));
+    try {
+      final response = await _client.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.categories}'));
+      
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        
+        // Debug print to see the response
+        foundation.debugPrint('Categories API Response: $data');
+        
+        return data.map((key, value) => MapEntry(
+          key,
+          Category.fromJson(value as Map<String, dynamic>),
+        ));
+      }
+      throw Exception('Failed to load categories: ${response.statusCode}');
+    } catch (e) {
+      foundation.debugPrint('Error in getCategories: $e');
+      return {};
     }
-    throw Exception('Failed to load categories');
   }
 
   Future<Map<String, Product>> getProductsByCategory(String category) async {
