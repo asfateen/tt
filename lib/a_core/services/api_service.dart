@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:batee5/a_core/constants/api_constants.dart';
 import 'package:batee5/a_core/models/category.dart';
 import 'package:batee5/a_core/models/product.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
   final http.Client _client = http.Client();
