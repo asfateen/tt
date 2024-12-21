@@ -108,7 +108,6 @@ jobs:
           
       - name: Deploy Frontend to Railway
         run: |
-          railway link ${{ secrets.RAILWAY_PROJECT }}
           railway up --service frontend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -116,7 +115,6 @@ jobs:
       - name: Deploy Backend to Railway
         working-directory: ./backend
         run: |
-          railway link ${{ secrets.RAILWAY_PROJECT }}
           railway up --service backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
