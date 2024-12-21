@@ -104,7 +104,7 @@ jobs:
       - name: Build Flutter Web
         run: |
           flutter pub get
-          flutter build web --release --dart-define=API_URL=https://batee5-backend-production.up.railway.app
+          flutter build web --release --dart-define=API_URL=${{ vars.BACKEND_URL }}
           
       - name: Deploy Frontend to Railway
         run: |

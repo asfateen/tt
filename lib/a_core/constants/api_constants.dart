@@ -3,18 +3,10 @@ import 'dart:html';
 import 'package:http/http.dart' as http;
 
 class ApiConstants {
-  static String get baseUrl {
-    // Get the current URL in web, or the environment variable in mobile
-    final currentUrl = Uri.base.toString();
-    
-    // If we're running on Railway or production domain
-    if (currentUrl.contains('railway.app')) {
-      return 'https://batee5-backend-production.up.railway.app';
-    }
-    
-    // Local development
-    return 'http://localhost:5000';
-  }
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://localhost:5000',
+  );
   
   // Endpoints
   static const String categories = '/categories';
