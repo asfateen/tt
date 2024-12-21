@@ -107,14 +107,16 @@ jobs:
           flutter build web --release
           
       - name: Deploy Frontend to Railway
-        run: railway up --service frontend
+        run: |
+          railway link ${{ secrets.RAILWAY_PROJECT }}
+          railway up --service frontend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT }}
           
       - name: Deploy Backend to Railway
         working-directory: ./backend
-        run: railway up --service backend
+        run: |
+          railway link ${{ secrets.RAILWAY_PROJECT }}
+          railway up --service backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT }}
