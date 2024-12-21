@@ -3,17 +3,8 @@ import 'dart:html';
 import 'package:http/http.dart' as http;
 
 class ApiConstants {
-  static String get baseUrl {
-    // For web platform
-    if (window.location.href.contains('railway.app')) {
-      return const String.fromEnvironment(
-        'API_URL',
-        defaultValue: 'https://batee5-backend-production.up.railway.app'
-      );
-    }
-    // For local development
-    return 'http://localhost:5000';
-  }
+  // Production backend URL
+  static const String baseUrl = 'https://batee5-backend-production.up.railway.app';
   
   // Endpoints
   static const String categories = '/categories';
