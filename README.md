@@ -1,5 +1,4 @@
 # Batee5 - Flutter & Flask Application
- 
 A Flutter application with a Flask backend, using PostgreSQL for data storage.
 
 ## Project Structure
