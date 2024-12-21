@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'))
 
-    # Add PostgreSQL service
     services:
       postgres:
         image: postgres:latest
@@ -33,7 +32,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Backend Setup
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -57,13 +55,11 @@ jobs:
         run: |
           python run.py & 
           echo "BACKEND_PID=$!" >> $GITHUB_ENV
-          # Give the server a moment to start
           sleep 5
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/batee5_test
           FLASK_ENV: testing
 
-      # Flutter Setup and Validation
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.12.0
         with:
@@ -80,7 +76,6 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      # Cleanup
       - name: Stop backend server
         if: always()
         run: |
@@ -112,18 +107,14 @@ jobs:
           flutter build web --release
           
       - name: Deploy Frontend to Railway
-        run: |
-          railway login
-          railway up --service frontend
+        run: railway up --service frontend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT }}
           
       - name: Deploy Backend to Railway
         working-directory: ./backend
-        run: |
-          railway login
-          railway up --service backend
+        run: railway up --service backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT }}
