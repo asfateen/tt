@@ -63,10 +63,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.12.0
         with:
-          cache: true
-          flutter-version: 3.24.5
+          flutter-version: '3.24.5'
           channel: stable
-
+          
       - name: Install dependencies
         run: flutter pub get
 
@@ -104,11 +103,12 @@ jobs:
       - name: Build Flutter Web
         run: |
           flutter pub get
-          flutter build web --release --dart-define=API_URL=${{ vars.BACKEND_URL }}
+          flutter build web \
+            --release \
+            --dart-define=API_URL=${{ vars.BACKEND_URL }}
           
       - name: Deploy Frontend to Railway
         run: |
-          flutter build web --release
           mkdir -p deploy
           cp -r build/web/* deploy/
           cp Dockerfile deploy/
