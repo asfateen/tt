@@ -3,22 +3,17 @@ import 'dart:html';
 import 'package:http/http.dart' as http;
 
 class ApiConstants {
-  static late String baseUrl;
-  
-  static Future<void> initialize() async {
-    if (kIsWeb) {
-      final response = await http.get(Uri.parse('/config.json'));
-      final config = json.decode(response.body);
-      
-      // Check if we're in production based on the URL
-      final isProduction = window.location.hostname.contains('railway.app');
-      baseUrl = isProduction ? config['production']['apiUrl'] : config['development']['apiUrl'];
-    } else {
-      baseUrl = const String.fromEnvironment(
-        'API_URL',
-        defaultValue: 'http://localhost:5000',
-      );
+  static String get baseUrl {
+    // Get the current URL in web, or the environment variable in mobile
+    final currentUrl = Uri.base.toString();
+    
+    // If we're running on Railway or production domain
+    if (currentUrl.contains('railway.app')) {
+      return 'https://batee5-backend-production.up.railway.app';
     }
+    
+    // Local development
+    return 'http://localhost:5000';
   }
   
   // Endpoints

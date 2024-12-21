@@ -1,8 +1,0 @@
-{
-    "production": {
-        "apiUrl": "https://batee5-backend-production.up.railway.app"
-    },
-    "development": {
-        "apiUrl": "http://localhost:5000"
-    }
-}
