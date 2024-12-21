@@ -108,6 +108,7 @@ jobs:
           
       - name: Deploy Frontend to Railway
         run: |
+          cp -r build/web/* .
           railway up --service frontend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -115,6 +116,7 @@ jobs:
       - name: Deploy Backend to Railway
         working-directory: ./backend
         run: |
+          echo "web: python run.py" > Procfile
           railway up --service backend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
