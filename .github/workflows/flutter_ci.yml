@@ -108,7 +108,10 @@ jobs:
           
       - name: Deploy Frontend to Railway
         run: |
+          flutter build web --release
           cp -r build/web/* .
+          cp Dockerfile build/web/
+          cd build/web
           railway up --service frontend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -117,6 +120,8 @@ jobs:
         working-directory: ./backend
         run: |
           echo "web: python run.py" > Procfile
+          echo "FLASK_APP=app" > .env
+          echo "FLASK_ENV=production" >> .env
           railway up --service backend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
