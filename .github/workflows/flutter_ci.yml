@@ -121,6 +121,9 @@ jobs:
           echo "web: python run.py" > Procfile
           echo "FLASK_APP=app" > .env
           echo "FLASK_ENV=production" >> .env
+          echo "python -c 'from app import create_app; from app.models import db; app=create_app(); app.app_context().push(); db.create_all()' && python run.py" > startup.sh
+          chmod +x startup.sh
+          echo "web: ./startup.sh" > Procfile
           railway up --service backend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
