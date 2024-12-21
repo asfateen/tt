@@ -2,6 +2,7 @@
 A Flutter application with a Flask backend, using PostgreSQL for data storage.
 
 
+
 ## Project Structure
 ```
 batee5/
