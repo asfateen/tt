@@ -49,7 +49,3 @@ app.*.map.json
 
 # Virtual environment
 **/venv/
-
-
- .metadata
- 
