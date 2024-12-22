@@ -11,9 +11,8 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'))
 
-    # Add PostgreSQL service
     services:
       postgres:
         image: postgres:latest
@@ -33,7 +32,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Backend Setup
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -57,20 +55,17 @@ jobs:
         run: |
           python run.py & 
           echo "BACKEND_PID=$!" >> $GITHUB_ENV
-          # Give the server a moment to start
           sleep 5
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/batee5_test
           FLASK_ENV: testing
 
-      # Flutter Setup and Validation
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.12.0
         with:
-          cache: true
-          flutter-version: 3.24.5
+          flutter-version: '3.24.5'
           channel: stable
-
+          
       - name: Install dependencies
         run: flutter pub get
 
@@ -80,7 +75,6 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      # Cleanup
       - name: Stop backend server
         if: always()
         run: |
@@ -112,12 +106,24 @@ jobs:
           flutter build web --release
           
       - name: Deploy Frontend to Railway
-        run: railway up --service frontend
+        run: |
+          mkdir -p deploy
+          cp -r build/web/* deploy/
+          cp Dockerfile deploy/
+          cd deploy
+          railway up --service frontend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           
       - name: Deploy Backend to Railway
         working-directory: ./backend
-        run: railway up --service backend
+        run: |
+          echo "web: python run.py" > Procfile
+          echo "FLASK_APP=app" > .env
+          echo "FLASK_ENV=production" >> .env
+          echo "python -c 'from app import create_app; from app.models import db; app=create_app(); app.app_context().push(); db.create_all()' && python run.py" > startup.sh
+          chmod +x startup.sh
+          echo "web: ./startup.sh" > Procfile
+          railway up --service backend --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
