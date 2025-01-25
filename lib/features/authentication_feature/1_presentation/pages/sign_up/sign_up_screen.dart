@@ -9,10 +9,6 @@ import 'package:batee5/features/authentication_feature/1_presentation/pages/widg
 import 'package:batee5/features/authentication_feature/1_presentation/pages/widgets/submit_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:batee5/a_core/utils/validator.dart';
-import 'package:batee5/features/authentication_feature/data/auth_service.dart';
-import 'package:batee5/features/authentication_feature/1_presentation/pages/email_verification.dart';
-import 'package:batee5/features/authentication_feature/1_presentation/pages/enter_OTP/components/OTP_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -23,40 +19,8 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   String? email;
+
   String? name;
-  bool isLoading = false;
-  String? errorMessage;
-  final AuthService _authService = AuthService();
-
-  Future<void> _handleSignUp() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-
-    try {
-      final result = await _authService.register(email!, name!);
-      
-      if (result['success']) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EmailVerification(
-              passwordReset: false,
-              email: email!,
-            ),
-          ),
-        );
-      } else {
-        setState(() {
-          errorMessage = result['message'];
-        });
-      }
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,25 +73,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  children: [
-                    if (errorMessage != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          errorMessage!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
-                          ),
-                        ),
+                child: SubmitTextButton(
+                  text: "Next",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const EnterPhoneNumber(passwordReset: false),
                       ),
-                    SubmitTextButton(
-                      text: isLoading ? "Sending..." : "Next",
-                      onPressed: _handleSignUp,
-                      isEnabled: !isLoading && validate(email, name),
-                    ),
-                  ],
+                    );
+                  },
+                  isEnabled: validate(email, name),
                 ),
               ),
               Padding(

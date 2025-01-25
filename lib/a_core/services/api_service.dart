@@ -4,6 +4,7 @@ import 'package:batee5/a_core/constants/api_constants.dart';
 import 'package:batee5/data/models/category.dart';
 import 'package:batee5/data/models/product.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:flutter/foundation.dart';
 
 class ApiService {
   final http.Client _client = http.Client();
@@ -74,5 +75,32 @@ class ApiService {
       return data['isFavorite'] as bool;
     }
     throw Exception('Failed to toggle favorite');
+  }
+
+  Future<Map<String, Product>> getAllProducts() async {
+    try {
+      final response = await _client.get(
+        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        
+        final products = <String, Product>{};
+        data.forEach((key, value) {
+          try {
+            products[key] = Product.fromJson(key, value as Map<String, dynamic>);
+          } catch (e) {
+            debugPrint('Error parsing product $key: $e');
+          }
+        });
+
+        return products;
+      }
+      throw Exception('Failed to load products: ${response.statusCode}');
+    } catch (e) {
+      debugPrint('Error in getAllProducts: $e');
+      return {};
+    }
   }
 }

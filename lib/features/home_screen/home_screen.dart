@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   Map<String, Category> categories = {};
   Map<String, Product> products = {};
-  String selectedCategory = 'electronics';
+  String? selectedCategory;
 
   @override
   void initState() {
@@ -33,7 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadData() async {
     try {
       final cats = await _apiService.getCategories();
-      final prods = await _apiService.getProductsByCategory(selectedCategory);
+      final prods = selectedCategory != null 
+          ? await _apiService.getProductsByCategory(selectedCategory!)
+          : await _apiService.getAllProducts();
 
       setState(() {
         categories = cats;
@@ -45,10 +47,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _selectCategory(String? categoryName) {
+    setState(() {
+      selectedCategory = categoryName;
+    });
+    _loadData();
+  }
+
   Future<void> _toggleFavorite(String productId) async {
     try {
       final newStatus =
-          await _apiService.toggleFavorite(selectedCategory, productId);
+          await _apiService.toggleFavorite(selectedCategory!, productId);
       setState(() {
         products[productId]?.isFavorite = newStatus;
       });
@@ -151,33 +160,75 @@ class _HomeScreenState extends State<HomeScreen> {
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: List.filled(
-                                    8,
+                                  children: [
+                                    // All Categories option
                                     Padding(
                                       padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 22,
-                                            foregroundImage:
-                                                imageUrl.startsWith('http')
-                                                    ? NetworkImage(imageUrl)
-                                                        as ImageProvider
-                                                    : AssetImage(imageUrl)
-                                                        as ImageProvider,
-                                          ),
-                                          Text(
-                                            'category',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
+                                      child: GestureDetector(
+                                        onTap: () => _selectCategory(null),
+                                        child: Column(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 22,
+                                              backgroundColor: selectedCategory == null 
+                                                  ? AppColors.lightGreen 
+                                                  : AppColors.lightGrey,
+                                              child: Icon(Icons.all_inclusive, 
+                                                color: selectedCategory == null 
+                                                    ? Colors.white 
+                                                    : Colors.black),
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'All',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                fontWeight: selectedCategory == null 
+                                                    ? FontWeight.bold 
+                                                    : FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    ...categories.entries.map((entry) => Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: GestureDetector(
+                                        onTap: () => _selectCategory(entry.key),
+                                        child: Column(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 22,
+                                              backgroundColor: selectedCategory == entry.key 
+                                                  ? AppColors.lightGreen 
+                                                  : AppColors.lightGrey,
+                                              child: Text(
+                                                entry.value.name[0].toUpperCase(),
+                                                style: TextStyle(
+                                                  color: selectedCategory == entry.key 
+                                                      ? Colors.white 
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              entry.value.name,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                fontWeight: selectedCategory == entry.key 
+                                                    ? FontWeight.bold 
+                                                    : FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )).toList(),
+                                  ],
                                 ),
                               ),
                             ],
