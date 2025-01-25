@@ -15,7 +15,7 @@ import 'package:batee5/a_core/config/apptheme.dart';
 import 'package:batee5/a_core/constants/app_colors.dart';
 import 'package:batee5/a_core/widgets/batee5_app_bar/batee5_app_bar.dart';
 import 'package:batee5/a_core/utils/validator.dart';
-import 'package:batee5/features/authentication_feature/1_presentation/pages/sign_in/email_verification.dart';
+import 'package:batee5/features/authentication_feature/1_presentation/pages/email_verification.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);

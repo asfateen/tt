@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:batee5/a_core/utils/validator.dart';
 import 'package:batee5/features/authentication_feature/data/auth_service.dart';
+import 'package:batee5/features/authentication_feature/1_presentation/pages/email_verification.dart';
+import 'package:batee5/features/authentication_feature/1_presentation/pages/enter_OTP/components/OTP_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
