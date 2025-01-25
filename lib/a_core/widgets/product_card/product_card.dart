@@ -167,12 +167,12 @@ class _ProductCardState extends State<ProductCard> {
                 child: OutlinedMultiColorButton(
                   fillColor: Colors.white,
                   filledIcon: widget.isFavorite
-                      ? const SizedBox()
-                      : Icon(
+                      ? Icon(
                           size: width * .022,
                           Icons.favorite_rounded,
                           color: Colors.red,
-                        ),
+                        ) 
+                        : const SizedBox(),
                   borderIcon: Icon(
                     size: width * .022,
                     Icons.favorite_outline_rounded,

@@ -47,9 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _selectCategory(String? categoryName) {
+  void _selectCategory(String? categoryId) {
     setState(() {
-      selectedCategory = categoryName;
+      selectedCategory = categoryId != null ? categories[categoryId]?.name : null;
     });
     _loadData();
   }
