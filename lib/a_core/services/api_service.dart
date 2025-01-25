@@ -33,13 +33,14 @@ class ApiService {
 
   Future<Map<String, Product>> getProductsByCategory(String category) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}'),
-      );
+      final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.products}')
+          .replace(queryParameters: {'category': category});
+          
+      final response = await _client.get(uri);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        debugPrint('API Response: $data');
+        debugPrint('API Response for category $category: $data');
 
         final products = <String, Product>{};
         data.forEach((key, value) {

@@ -10,7 +10,6 @@ class ApiConstants {
   static const String categories = '/categories';
   static const String products = '/products';
   
-  static String productByCategory(String category) => '/products/$category';
-  static String productById(String category, String productId) => '/products/$category/$productId';
-  static String toggleFavorite(String category, String productId) => '/products/$category/$productId/favorite';
+  static String productById(String productId) => '/products/$productId';
+  static String toggleFavorite(String productId) => '/products/$productId/favorite';
 } 
