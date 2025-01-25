@@ -15,4 +15,11 @@ class Validator {
     // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
     return RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$').hasMatch(password);
   }
+
+  static bool isPhoneNumberValid(String phoneNumber) {
+    // Remove any non-digit characters
+    String cleanNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    // Check if the cleaned number is between 8 and 15 digits
+    return cleanNumber.length >= 8 && cleanNumber.length <= 15;
+  }
 }
