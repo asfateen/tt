@@ -11,5 +11,5 @@ class ApiConstants {
   static const String products = '/products';
   
   static String productById(String productId) => '/products/$productId';
-  static String toggleFavorite(String productId) => '/products/$productId/favorite';
+  static String toggleFavorite(String category, String productId) => '/products/$category/$productId/favorite';
 } 
